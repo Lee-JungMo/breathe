@@ -28,8 +28,9 @@ def main():
         time_0 = time.time()
         t_before = 0
         t_after = 0
+        n = 0
         try:
-            while True:
+            while n < 800000:
                 data = []
                 if ser.readable():
                     t_present = time.time() - time_0
@@ -46,11 +47,15 @@ def main():
                             #print(data)
                             makewrite.writerow(data)
                             t_before = t_after
+                            n = n + 1
                     else:
                         pass
                 else:
                     print('cannot open serial')
 
+            else: 
+                print('end')
+                quit() 
         except KeyboardInterrupt:
             print('stop')
 

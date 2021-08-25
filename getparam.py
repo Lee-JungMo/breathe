@@ -53,10 +53,10 @@ def main():
                 if x[peaks[index]] > x.mean() * 1.3:
                     modify_peaks.append(peaks[index])
             
-            plt.figure(figsize=(20,5))
-            plt.plot(x)
-            plt.plot(modify_peaks, x[modify_peaks], "x")
-            plt.plot(np.zeros_like(x), "--", color="gray")
+            #plt.figure(figsize=(20,5))
+            #plt.plot(x)
+            #plt.plot(modify_peaks, x[modify_peaks], "x")
+            #plt.plot(np.zeros_like(x), "--", color="gray")
             
             dif_t = []
             peak_t = []
@@ -67,8 +67,8 @@ def main():
             for step in np.diff(modify_peaks):
                 dif_t.append(timenp[step]) 
             
-            plt.figure(figsize=(6,5))
-            plt.plot(modify_peak_t, dif_t)
+            #plt.figure(figsize=(6,5))
+            #plt.plot(modify_peak_t, dif_t)
 
             plt.figure(figsize=(20,5))
             frequency, power = LombScargle(modify_peak_t, dif_t).autopower(minimum_frequency=0.001,maximum_frequency=1.000, samples_per_peak=50)
@@ -84,20 +84,11 @@ def main():
                     HF_power = HF_power + power[n]
             
             LF_HF_ratio = LF_power/HF_power
-
             avg = np.mean(dif_t)
             SDNN = np.std(dif_t)
-
             dif_dif_t = np.diff(dif_t)
             SDSD = np.std(dif_dif_t)
-
             RMSSD = ((dif_dif_t ** 2).sum() / len(dif_dif_t)) ** 0.5 
-
-            #print("avg : " + str(avg))
-            #print("SDNN : " + str(SDNN))
-            #print("SDSD : " + str(SDSD))
-            #print("RMSSD = " + str(RMSSD))
-            #print("LF_HF_ratio = " + str(LF_HF_ratio))
 
             param = []
             param.append(str(avg))
@@ -108,7 +99,7 @@ def main():
             param.append(str(file_number))
             makewrite.writerow(param)
 
-            #plt.show()
+            plt.show()
 
 if __name__ == "__main__":
     main()
