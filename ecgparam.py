@@ -17,7 +17,7 @@ from astropy.timeseries import LombScargle
 
 def main():
 
-    para_tsv = "data/para_result" + str(sys.argv[3]) + ".tsv"
+    para_tsv = "data/ecg_para_result" + str(sys.argv[3]) + ".tsv"
     with open(para_tsv, "w") as p:
         makewrite = csv.writer(p, delimiter = '\t')
         first = []
@@ -46,17 +46,18 @@ def main():
             timenp = np.array(time)
             
             x = sig[100:len(sig)-100]
-            peaks, _ = find_peaks(x, distance=600)
+            #x = sig[1000:8000]
+            peaks, _ = find_peaks(x, distance=100)
 
             modify_peaks = []
             for index in range(len(peaks)):
                 if x[peaks[index]] > x.mean() * 1.3:
                     modify_peaks.append(peaks[index])
             
-            #plt.figure(figsize=(20,5))
-            #plt.plot(x)
-            #plt.plot(modify_peaks, x[modify_peaks], "x")
-            #plt.plot(np.zeros_like(x), "--", color="gray")
+            plt.figure(figsize=(20,5))
+            plt.plot(x)
+            plt.plot(modify_peaks, x[modify_peaks], "x")
+            plt.plot(np.zeros_like(x), "--", color="gray")
             
             dif_t = []
             peak_t = []
@@ -67,8 +68,8 @@ def main():
             for step in np.diff(modify_peaks):
                 dif_t.append(timenp[step]) 
             
-            #plt.figure(figsize=(6,5))
-            #plt.plot(modify_peak_t, dif_t)
+            plt.figure(figsize=(6,5))
+            plt.plot(modify_peak_t, dif_t)
 
             plt.figure(figsize=(20,5))
             frequency, power = LombScargle(modify_peak_t, dif_t).autopower(minimum_frequency=0.001,maximum_frequency=1.000, samples_per_peak=50)

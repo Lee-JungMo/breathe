@@ -20,44 +20,60 @@ sample_T = 0.0001
 
 def main():
 
-    file_tsv = "data/ecg" + str(sys.argv[1]) + ".tsv"
+    ecg_tsv = "data/ecg" + str(sys.argv[1]) + ".tsv"
+    pressure_tsv = "data/pressure" + str(sys.argv[1]) + ".tsv"
     #file_csv = "ecg" + str(sys.argv[1]) + ".csv"
     #with open("ecg2.tsv", "w", newline='', encoding ='utf-8') as g:
-    with open(file_tsv, "w") as g:
-        makewrite = csv.writer(g, delimiter = '\t')
-        time_0 = time.time()
-        t_before = 0
-        t_after = 0
-        n = 0
-        try:
-            while n < 800000:
-                data = []
-                if ser.readable():
-                    t_present = time.time() - time_0
-                    t_after = t_present
-                    if t_after - t_before > sample_T:
-                        data.append(str(t_present))
-                        serialdata = ser.readline()
-                        #print(serialdata)
-                        data_decoded= serialdata.decode()[:len(serialdata)-1].split(',')
-                        print(data_decoded[0])
-                        if(int(data_decoded[0]) < 3000):
-                            #print(type(data_decoded))
-                            data.append(str(data_decoded[0]))
-                            #print(data)
-                            makewrite.writerow(data)
-                            t_before = t_after
-                            n = n + 1
-                    else:
-                        pass
-                else:
-                    print('cannot open serial')
+    with open(ecg_tsv, "w") as e:
+        with open(pressure_tsv, "w") as p:
+            makewrite_e = csv.writer(e, delimiter = '\t')
+            makewrite_p = csv.writer(p, delimiter = '\t')
+            time_0 = time.time()
+            t_before = 0
+            t_after = 0
+            n = 0
+            try:
+                while n < 100000:
+                    data_e = []
+                    data_p = []
+                    if ser.readable():
+                        t_present = time.time() - time_0
+                        t_after = t_present
+                        if t_after - t_before > sample_T:
+                            try:
+                                serialdata = ser.readline()
+                                #print(serialdata)
+                                data_decoded = serialdata.decode()[:len(serialdata)-1].split(',')
+                                ecg_pre = data_decoded[0]
+                                pressure_pre = data_decoded[1]
+                                ecg = ecg_pre.split()
+                                pressure =  pressure_pre.split()
+                                print(ecg[2], pressure[2])
+                                if(int(ecg[2]) < 3000 and int(pressure[2]) > 90000):
+                                    #print(type(data_decoded))
+                                    data_e.append(str(t_present))
+                                    data_p.append(str(t_present))
+                                    data_e.append(ecg[2])
+                                    data_p.append(pressure[2])
+                                    #print(data)
+                                    makewrite_e.writerow(data_e)
+                                    makewrite_p.writerow(data_p)
+                                    t_before = t_after
+                                    n = n + 1
+                            except IndexError:
+                                print(data_decoded)
+                            except ValueError:
+                                print(pressure[2])
 
-            else: 
-                print('end')
-                quit() 
-        except KeyboardInterrupt:
-            print('stop')
+                        else:
+                            pass
+                    else:
+                        print('cannot open serial')
+                else: 
+                    print('end')
+                    quit() 
+            except KeyboardInterrupt:
+                print('stop')
 
 #def convert():
 #    dfs = pd.read_csv(file_tsv, sep='\t', chunksize = 50)
