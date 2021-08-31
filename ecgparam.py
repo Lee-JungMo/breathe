@@ -46,7 +46,7 @@ def main():
             timenp = np.array(time)
             
             x = sig[100:len(sig)-100]
-            #x = sig[1000:8000]
+            #x = sig[30000:40000]
             peaks, _ = find_peaks(x, distance=100)
 
             modify_peaks = []

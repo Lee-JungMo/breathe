@@ -12,7 +12,7 @@ from pandas import read_csv
 import matplotlib.pyplot as plt
 import sys
 
-sudoPassword = '12341234'
+sudoPassword = '1234'
 command = 'chmod 777 /dev/ttyACM0'
 p = os.system('echo %s|sudo -S %s' % (sudoPassword, command))
 ser = Serial('/dev/ttyACM0', 115200)
@@ -33,7 +33,7 @@ def main():
             t_after = 0
             n = 0
             try:
-                while n < 100000:
+                while n < 800000:
                     data_e = []
                     data_p = []
                     if ser.readable():
@@ -44,26 +44,28 @@ def main():
                                 serialdata = ser.readline()
                                 #print(serialdata)
                                 data_decoded = serialdata.decode()[:len(serialdata)-1].split(',')
-                                ecg_pre = data_decoded[0]
-                                pressure_pre = data_decoded[1]
-                                ecg = ecg_pre.split()
-                                pressure =  pressure_pre.split()
-                                print(ecg[2], pressure[2])
-                                if(int(ecg[2]) < 3000 and int(pressure[2]) > 90000):
+                                ecg = data_decoded[0]
+                                print(ecg)
+                                #pressure_pre = data_decoded[1]
+                                #ecg = ecg_pre.split()
+                                #pressure =  pressure_pre.split()
+                                #print(ecg[2])
+                                if(int(ecg) < 3000):
                                     #print(type(data_decoded))
                                     data_e.append(str(t_present))
-                                    data_p.append(str(t_present))
-                                    data_e.append(ecg[2])
-                                    data_p.append(pressure[2])
+                                    #data_p.append(str(t_present))
+                                    data_e.append(ecg)
+                                    #data_p.append(pressure[2])
                                     #print(data)
                                     makewrite_e.writerow(data_e)
-                                    makewrite_p.writerow(data_p)
+                                    #makewrite_p.writerow(data_p)
                                     t_before = t_after
                                     n = n + 1
                             except IndexError:
                                 print(data_decoded)
-                            except ValueError:
-                                print(pressure[2])
+                                #print(1)
+                            #except ValueError:
+                            #    print(pressure[2])
 
                         else:
                             pass
